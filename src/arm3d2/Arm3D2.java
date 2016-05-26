@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Enumeration;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.scene.transform.Transform;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
@@ -30,7 +32,6 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
-import javax.swing.Timer;
 import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
@@ -47,10 +48,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private CollisionDetector myColSphere;
     private Sphere mySphere;
     private float x2, y2, x1, y1, x, y, x3, y3, rot1, rot2, rot, rot3;
-    private float myAngle = (float) (Math.PI/36);
+    private float myAngle = (float) (Math.PI/72);
     private Appearance armApp, armApp2;
     private Shape3D armPartsTab[] = new Shape3D[112];
     private int number;
+    private boolean     klawisze[];
+    private Timer zegar;
     
     public Arm3D2()
     {
@@ -67,6 +70,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         add(myCanvas);
         pack();
         setVisible(true);
+         
+        klawisze        = new boolean[8];
+        for(int i=0; i<8; i++) klawisze[i] = false;
+        
+        zegar = new Timer();
+        zegar.scheduleAtFixedRate(new Zadanie(),0,25);
         
         BranchGroup myScene = createMyScene();
         myScene.compile();
@@ -237,106 +246,135 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-        if(e.getKeyChar()=='q')
-        {        
-        Transform3D  tmp_rot      = new Transform3D();
-        tmp_rot.rotZ(myAngle);
-        myTransform.mul(tmp_rot);
-        rot = (float) (rot + myAngle);
-        x = (float) (1.0f*(Math.cos(rot)));
-        y = (float) (1.0f*(Math.sin(rot)));
-        myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
-        myTransformGroup.setTransform(myTransform);
-        }
-        if(e.getKeyChar()=='a')
-        {
-        Transform3D  tmp_rot      = new Transform3D();
-        tmp_rot.rotZ(-myAngle);
-        myTransform.mul(tmp_rot);
-        rot = (float) (rot - myAngle);
-        x = (float) (1.0f*(Math.cos(rot)));
-        y = (float) (1.0f*(Math.sin(rot)));
-        myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
-        myTransformGroup.setTransform(myTransform);
-        }
-        if(e.getKeyChar()=='w')
-        {        
-        Transform3D  tmp_rot      = new Transform3D();
-        tmp_rot.rotZ(myAngle);
-        myTransform1.mul(tmp_rot);
-        rot1 = (float) (rot1 + myAngle);
-        x1 = (float) (0.9f + 0.85f*(Math.cos(rot1)));
-        y1 = (float) (0.85f*(Math.sin(rot1)));
-        myTransform1.setTranslation(new Vector3f(x1, y1, 0.0f));
-        myTransformGroup1.setTransform(myTransform1);
-        }
-        if(e.getKeyChar()=='s')
-        {
-        Transform3D  tmp_rot      = new Transform3D();
-        tmp_rot.rotZ(-myAngle);
-        myTransform1.mul(tmp_rot);
-        rot1 = (float) (rot1 - myAngle);
-        x1 = (float) (0.9f + 0.85f*(Math.cos(rot1)));
-        y1 = (float) (0.85f*(Math.sin(rot1)));
-        myTransform1.setTranslation(new Vector3f(x1, y1, 0.0f));
-        myTransformGroup1.setTransform(myTransform1);
-        }
-        if(e.getKeyChar()=='e')
-        {        
-        Transform3D  tmp_rot      = new Transform3D();
-        tmp_rot.rotZ(myAngle);
-        myTransform2.mul(tmp_rot);
-        rot2 = (float) (rot2 + myAngle);
-        x2 = (float) (0.9f + 0.9f*(Math.cos(rot2)));
-        y2 = (float) (0.1f + 0.9f*(Math.sin(rot2)));
-        myTransform2.setTranslation(new Vector3f(x2 , y2, 0.0f));
-        myTransformGroup2.setTransform(myTransform2);
-        }
-        if(e.getKeyChar()=='d')
-        {
-        Transform3D  tmp_rot      = new Transform3D();
-        tmp_rot.rotZ(-myAngle);
-        myTransform2.mul(tmp_rot);
-        rot2 = (float) (rot2 - myAngle);
-        x2 = (float) (0.9f + 0.9f*(Math.cos(rot2)));
-        y2 = (float) (0.1f + 0.9f*(Math.sin(rot2)));
-        myTransform2.setTranslation(new Vector3f(x2, y2, 0.0f));
-        myTransformGroup2.setTransform(myTransform2);
-        }
-        if(e.getKeyChar() == 'z')
-        {
-         Transform3D  tmp_rot      = new Transform3D();
-        tmp_rot.rotY(myAngle);
-        mainTransform.mul(tmp_rot);
-        mainTransformGroup.setTransform(mainTransform);
-        cubeTransform.mul(tmp_rot);
-        rot3 = (float) (rot3 + myAngle);
-        x3 = (float) (-0.1f*(Math.cos(rot3)));
-        y3 = (float) (-0.1f*(Math.sin(rot3)));
-        cubeTransform.setTranslation(new Vector3f(x3, -0.1f, 0.0f));
-        cubeTransformGroup.setTransform(cubeTransform);
-        }
-        if(e.getKeyChar() == 'x')
-        {
-        Transform3D  tmp_rot      = new Transform3D();
-        tmp_rot.rotY(-myAngle);
-        mainTransform.mul(tmp_rot);
-        mainTransformGroup.setTransform(mainTransform);
-        cubeTransform.mul(tmp_rot);
-        rot3 = (float) (rot3 - myAngle);
-        x3 = (float) (-0.1f*(Math.cos(rot3)));
-        y3 = (float) (-0.1f*(Math.sin(rot3)));
-        cubeTransform.setTranslation(new Vector3f(x3, -0.1f, 0.0f));
-        cubeTransformGroup.setTransform(cubeTransform);
+    public void keyPressed(KeyEvent e) 
+    {
+        switch(e.getKeyCode()){
+                    case KeyEvent.VK_Q:      klawisze[0] = true; break;
+                    case KeyEvent.VK_A:    klawisze[1] = true; break;
+                    case KeyEvent.VK_W:    klawisze[2] = true; break;
+                    case KeyEvent.VK_S:   klawisze[3] = true; break;
+                    case KeyEvent.VK_E:      klawisze[4] = true; break;
+                    case KeyEvent.VK_D:    klawisze[5] = true; break;
+                    case KeyEvent.VK_Z:    klawisze[6] = true; break;
+                    case KeyEvent.VK_X:   klawisze[7] = true; break;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) 
     {
-        
+         switch(e.getKeyCode()){
+                    case KeyEvent.VK_Q:      klawisze[0] = false; break;
+                    case KeyEvent.VK_A:    klawisze[1] = false; break;
+                    case KeyEvent.VK_W:    klawisze[2] = false; break;
+                    case KeyEvent.VK_S:   klawisze[3] = false; break;
+                    case KeyEvent.VK_E:      klawisze[4] = false; break;
+                    case KeyEvent.VK_D:    klawisze[5] = false; break;
+                    case KeyEvent.VK_Z:    klawisze[6] = false; break;
+                    case KeyEvent.VK_X:   klawisze[7] = false; break;
+         }
     }
+ 
+    class Zadanie extends TimerTask{
+
+        public void run()
+        {
+
+            if(klawisze[0])
+            {
+              Transform3D  tmp_rot      = new Transform3D();
+              tmp_rot.rotZ(myAngle);
+              myTransform.mul(tmp_rot);
+              rot = (float) (rot + myAngle);
+              x = (float) (1.0f*(Math.cos(rot)));
+              y = (float) (1.0f*(Math.sin(rot)));
+              myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
+              myTransformGroup.setTransform(myTransform);
+            }
+            if(klawisze[1])
+            {
+                Transform3D  tmp_rot      = new Transform3D();
+                tmp_rot.rotZ(-myAngle);
+                myTransform.mul(tmp_rot);
+                rot = (float) (rot - myAngle);
+                x = (float) (1.0f*(Math.cos(rot)));
+                y = (float) (1.0f*(Math.sin(rot)));
+                myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
+                myTransformGroup.setTransform(myTransform);
+            }
+            if(klawisze[2])
+            {
+                Transform3D  tmp_rot      = new Transform3D();
+                tmp_rot.rotZ(myAngle);
+                myTransform1.mul(tmp_rot);
+                rot1 = (float) (rot1 + myAngle);
+                x1 = (float) (0.9f + 0.85f*(Math.cos(rot1)));
+                y1 = (float) (0.85f*(Math.sin(rot1)));
+                myTransform1.setTranslation(new Vector3f(x1, y1, 0.0f));
+                myTransformGroup1.setTransform(myTransform1);
+            }
+            if(klawisze[3]) 
+            {
+                Transform3D  tmp_rot      = new Transform3D();
+                tmp_rot.rotZ(-myAngle);
+                myTransform1.mul(tmp_rot);
+                rot1 = (float) (rot1 - myAngle);
+                x1 = (float) (0.9f + 0.85f*(Math.cos(rot1)));
+                y1 = (float) (0.85f*(Math.sin(rot1)));
+                myTransform1.setTranslation(new Vector3f(x1, y1, 0.0f));
+                myTransformGroup1.setTransform(myTransform1);
+            }
+            if(klawisze[4])
+            {
+                Transform3D  tmp_rot      = new Transform3D();
+                tmp_rot.rotZ(myAngle);
+                myTransform2.mul(tmp_rot);
+                rot2 = (float) (rot2 + myAngle);
+                x2 = (float) (0.9f + 0.9f*(Math.cos(rot2)));
+                y2 = (float) (0.1f + 0.9f*(Math.sin(rot2)));
+                myTransform2.setTranslation(new Vector3f(x2 , y2, 0.0f));
+                myTransformGroup2.setTransform(myTransform2);
+            }
+            if(klawisze[5])
+            {
+                Transform3D  tmp_rot      = new Transform3D();
+                tmp_rot.rotZ(-myAngle);
+                myTransform2.mul(tmp_rot);
+                rot2 = (float) (rot2 - myAngle);
+                x2 = (float) (0.9f + 0.9f*(Math.cos(rot2)));
+                y2 = (float) (0.1f + 0.9f*(Math.sin(rot2)));
+                myTransform2.setTranslation(new Vector3f(x2, y2, 0.0f));
+                myTransformGroup2.setTransform(myTransform2);
+            }
+            if(klawisze[6])
+            {
+                Transform3D  tmp_rot      = new Transform3D();
+                tmp_rot.rotY(myAngle);
+                mainTransform.mul(tmp_rot);
+                mainTransformGroup.setTransform(mainTransform);
+                cubeTransform.mul(tmp_rot);
+                rot3 = (float) (rot3 + myAngle);
+                x3 = (float) (-0.1f*(Math.cos(rot3)));
+                y3 = (float) (-0.1f*(Math.sin(rot3)));
+                cubeTransform.setTranslation(new Vector3f(x3, -0.1f, 0.0f));
+                cubeTransformGroup.setTransform(cubeTransform);
+            }
+            if(klawisze[7]) 
+            {
+                Transform3D  tmp_rot      = new Transform3D();
+                tmp_rot.rotY(-myAngle);
+                mainTransform.mul(tmp_rot);
+                mainTransformGroup.setTransform(mainTransform);
+                cubeTransform.mul(tmp_rot);
+                rot3 = (float) (rot3 - myAngle);
+                x3 = (float) (-0.1f*(Math.cos(rot3)));
+                y3 = (float) (-0.1f*(Math.sin(rot3)));
+                cubeTransform.setTranslation(new Vector3f(x3, -0.1f, 0.0f));
+                cubeTransformGroup.setTransform(cubeTransform);
+            }
+           
+           }
+  }
     
     public static void main(String[] args)
     {
