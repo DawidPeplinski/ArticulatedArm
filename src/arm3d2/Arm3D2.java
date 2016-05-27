@@ -5,6 +5,7 @@ import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.geometry.Cylinder;
 import com.sun.j3d.utils.geometry.Sphere;
+import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,9 +26,12 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.Geometry;
+import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Material;
 import javax.media.j3d.SceneGraphPath;
 import javax.media.j3d.Shape3D;
+import javax.media.j3d.Texture;
+import javax.media.j3d.Texture2D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JFrame;
@@ -148,6 +152,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         lightD.setDirection(new Vector3f(0.0f, 0.0f, -1.0f));
         lightD.setColor(new Color3f(1.0f, 1.0f, 1.0f));
         wholeTransformGroup.addChild(lightD);
+        
+        DirectionalLight lightE = new DirectionalLight();
+        lightE.setInfluencingBounds(bounds);
+        lightE.setDirection(new Vector3f(0.0f, 0.0f, 1.0f));
+        lightE.setColor(new Color3f(1.0f, 1.0f, 1.0f));
+        wholeTransformGroup.addChild(lightE);
         // ładuję model
         Scene baseScene = null;
         Scene mainScene = null;
@@ -176,28 +186,51 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         mainTransform.setScale(0.3);
        
         //wyglad i materiał
-        armApp = new Appearance();
+    /*    armApp = new Appearance();
         Material armMat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
                                              new Color3f(0.5f, 0.5f, 0.5f), new Color3f(1.0f, 1.0f, 1.0f), 80.0f);
          ColoringAttributes armColor = new ColoringAttributes();
          armColor.setShadeModel(ColoringAttributes.SHADE_GOURAUD);
          armApp.setMaterial(armMat);
-         armApp.setColoringAttributes(armColor);
-         
-         Shape3D sasa = (Shape3D)Scene2.getSceneGroup().getChild(0);
-         sasa.setAppearance(armApp);
-         
+         armApp.setColoringAttributes(armColor);*/
+                  
+         // textura podłoża
+        Appearance ground_app = new Appearance(); 
+        TextureLoader loader = new TextureLoader("resources/ground.png",null);
+        ImageComponent2D image = loader.getImage();
+        Texture2D ground = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
+                                        image.getWidth(), image.getHeight());
+        ground.setImage(0, image);
+        ground.setBoundaryModeS(Texture.WRAP);
+        ground.setBoundaryModeT(Texture.WRAP);
+        ground_app.setTexture(ground);
+        
+        //textura sfery
+        Appearance sphere_app = new Appearance();
+        loader = new TextureLoader("resources/metal2.jpg",this);
+        image = loader.getImage();
+        Texture2D sphere_tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
+                                        image.getWidth(), image.getHeight());
+        sphere_tex.setImage(0, image);
+        sphere_tex.setBoundaryModeS(Texture.WRAP);
+        sphere_tex.setBoundaryModeT(Texture.WRAP);
+        sphere_app.setTexture(sphere_tex);
+        
+         Shape3D sasa = (Shape3D)Scene1.getSceneGroup().getChild(0);
+         sasa.setAppearance(sphere_app);
+        
                  
          //Podstawa ramienia
-        Cylinder podstawa = new Cylinder(1.0f,0.05f,armApp);
+        Cylinder podstawa = new Cylinder(1.0f,0.05f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, ground_app);
+        podstawa.setAppearance(ground_app);
         Transform3D p_podstawa = new Transform3D();
-        p_podstawa.set(new Vector3f(0.0f, -0.55f, 0.0f));
+        p_podstawa.set(new Vector3f(0.0f, -0.535f, 0.0f));
         TransformGroup podstawa_transGroup = new TransformGroup(p_podstawa);
         podstawa_transGroup.addChild(podstawa);
         wholeTransformGroup.addChild(podstawa_transGroup);
         
         // Sfera
-        mySphere = new Sphere(0.1f, armApp);
+        mySphere = new Sphere(0.1f,Sphere.GENERATE_NORMALS | Sphere.GENERATE_TEXTURE_COORDS, sphere_app);
         myColSphere = new CollisionDetector(mySphere);
         Transform3D p_sfera = new Transform3D();
         p_sfera.set(new Vector3f(0.5f, -0.4f, 0.0f));
