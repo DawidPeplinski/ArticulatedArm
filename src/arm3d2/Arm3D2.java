@@ -8,6 +8,7 @@ import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionEvent;
@@ -32,11 +33,13 @@ import javax.media.j3d.SceneGraphPath;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
+import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.vecmath.Color3f;
+import javax.vecmath.Color4f;
 import javax.vecmath.Vector3f;
 
 public class Arm3D2 extends JFrame implements ActionListener, KeyListener
@@ -53,7 +56,6 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private Sphere mySphere;
     private float x2, y2, x1, y1, x, y, x3, y3, rot1, rot2, rot, rot3;
     private float myAngle = (float) (Math.PI/72);
-    private Appearance armApp, armApp2;
     private Shape3D armPartsTab[] = new Shape3D[112];
     private int number;
     private boolean     klawisze[];
@@ -79,7 +81,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         for(int i=0; i<8; i++) klawisze[i] = false;
         
         zegar = new Timer();
-        zegar.scheduleAtFixedRate(new Zadanie(),0,25);
+        zegar.scheduleAtFixedRate(new Zadanie(),0,20);
         
         BranchGroup myScene = createMyScene();
         myScene.compile();
@@ -99,7 +101,6 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         
         baseTransformGroup = new TransformGroup();
         baseTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-      //  mySceneBranch.addChild(baseTransformGroup);
         
         mainTransformGroup = new TransformGroup();
         mainTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -118,10 +119,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         
         wholeTransformGroup = new TransformGroup();
         wholeTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        
-      //  mySceneBranch.addChild(wholeTransformGroup);
-        
+                
         BoundingSphere bounds = new BoundingSphere();
+       
         // obracanie kamery        
         objRotate = new TransformGroup();
         objRotate.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -133,7 +133,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
 
         mySceneBranch.addChild(objRotate);
         
-       objRotate.addChild(wholeTransformGroup);
+        objRotate.addChild(wholeTransformGroup);
 
         MouseRotate myMouseRotate = new MouseRotate();
         
@@ -149,15 +149,16 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         
         DirectionalLight lightD = new DirectionalLight();
         lightD.setInfluencingBounds(bounds);
-        lightD.setDirection(new Vector3f(0.0f, 0.0f, -1.0f));
+        lightD.setDirection(new Vector3f(0.0f, -0.5f, -1.0f));
         lightD.setColor(new Color3f(1.0f, 1.0f, 1.0f));
         wholeTransformGroup.addChild(lightD);
         
         DirectionalLight lightE = new DirectionalLight();
         lightE.setInfluencingBounds(bounds);
-        lightE.setDirection(new Vector3f(0.0f, 0.0f, 1.0f));
+        lightE.setDirection(new Vector3f(0.0f, 0.5f, 1.0f));
         lightE.setColor(new Color3f(1.0f, 1.0f, 1.0f));
         wholeTransformGroup.addChild(lightE);
+        
         // ładuję model
         Scene baseScene = null;
         Scene mainScene = null;
@@ -184,16 +185,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         
         baseTransform.setScale(0.2);
         mainTransform.setScale(0.3);
-       
-        //wyglad i materiał
-    /*    armApp = new Appearance();
-        Material armMat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
-                                             new Color3f(0.5f, 0.5f, 0.5f), new Color3f(1.0f, 1.0f, 1.0f), 80.0f);
-         ColoringAttributes armColor = new ColoringAttributes();
-         armColor.setShadeModel(ColoringAttributes.SHADE_GOURAUD);
-         armApp.setMaterial(armMat);
-         armApp.setColoringAttributes(armColor);*/
-                  
+                         
          // textura podłoża
         Appearance ground_app = new Appearance(); 
         TextureLoader loader = new TextureLoader("resources/ground.png",null);
@@ -207,7 +199,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         
         //textura sfery
         Appearance sphere_app = new Appearance();
-        loader = new TextureLoader("resources/metal2.jpg",this);
+        loader = new TextureLoader("resources/pattern.jpg",this);
         image = loader.getImage();
         Texture2D sphere_tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
                                         image.getWidth(), image.getHeight());
@@ -216,12 +208,50 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         sphere_tex.setBoundaryModeT(Texture.WRAP);
         sphere_app.setTexture(sphere_tex);
         
-         Shape3D sasa = (Shape3D)Scene1.getSceneGroup().getChild(0);
-         sasa.setAppearance(sphere_app);
-        
-                 
+        //wygląd podstawy robota
+        Appearance base_app = new Appearance();
+        Material baseMat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
+                                             new Color3f(0.459f, 0.518f, 0.237f), new Color3f(1.0f, 1.0f, 1.0f), 80.0f);
+         ColoringAttributes baseColor = new ColoringAttributes();
+         baseColor.setShadeModel(ColoringAttributes.SHADE_GOURAUD);
+         base_app.setMaterial(baseMat);
+         base_app.setColoringAttributes(baseColor);
+         
+         Shape3D base_shape = (Shape3D)baseScene.getSceneGroup().getChild(0);
+         base_shape.setAppearance(base_app);
+         
+         //wygląd ramion robota
+        Appearance arms_app = new Appearance();
+        Material armsMat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
+                                             new Color3f(0.9f, 0.9f, 0.4f), new Color3f(1.0f, 1.0f, 1.0f), 80.0f);
+         ColoringAttributes armsColor = new ColoringAttributes();
+         armsColor.setShadeModel(ColoringAttributes.SHADE_GOURAUD);
+         arms_app.setMaterial(armsMat);
+         arms_app.setColoringAttributes(armsColor);
+         
+         Shape3D Scene0_shape = (Shape3D)Scene0.getSceneGroup().getChild(0);
+         Scene0_shape.setAppearance(arms_app);
+         
+         Shape3D Scene1_shape = (Shape3D)Scene1.getSceneGroup().getChild(0);
+         Scene1_shape.setAppearance(arms_app);
+         
+        // wygląd maina i chwytaka             
+         Appearance main_app = new Appearance();
+        Material main_mat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
+                                             new Color3f(0.7f, 0.7f, 0.4f), new Color3f(1.0f, 1.0f, 1.0f), 80.0f);
+         ColoringAttributes mainColor = new ColoringAttributes();
+         mainColor.setShadeModel(ColoringAttributes.SHADE_GOURAUD);
+         main_app.setMaterial(main_mat);
+         main_app.setColoringAttributes(mainColor);
+         
+         Shape3D Main_shape = (Shape3D)mainScene.getSceneGroup().getChild(0);
+         Main_shape.setAppearance(main_app);
+         Shape3D Scene2_shape = (Shape3D)Scene2.getSceneGroup().getChild(0);
+         Scene2_shape.setAppearance(main_app);
+         
          //Podstawa ramienia
         Cylinder podstawa = new Cylinder(1.0f,0.05f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, ground_app);
+        
         podstawa.setAppearance(ground_app);
         Transform3D p_podstawa = new Transform3D();
         p_podstawa.set(new Vector3f(0.0f, -0.535f, 0.0f));
@@ -310,6 +340,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
  
     class Zadanie extends TimerTask{
 
+        @Override
         public void run()
         {
 
@@ -391,6 +422,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 y3 = (float) (-0.1f*(Math.sin(rot3)));
                 cubeTransform.setTranslation(new Vector3f(x3, -0.1f, 0.0f));
                 cubeTransformGroup.setTransform(cubeTransform);
+               
+               // System.out.println("" + y2 + " " + rot2);
             }
             if(klawisze[7]) 
             {
