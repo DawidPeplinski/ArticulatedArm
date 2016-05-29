@@ -260,14 +260,19 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         wholeTransformGroup.addChild(podstawa_transGroup);
         
         // Sfera
-        mySphere = new Sphere(0.1f,Sphere.GENERATE_NORMALS | Sphere.GENERATE_TEXTURE_COORDS, sphere_app);
-        myColSphere = new CollisionDetector(mySphere);
+        mySphere = new Sphere(0.05f,Sphere.GENERATE_NORMALS | Sphere.GENERATE_TEXTURE_COORDS, sphere_app);
         Transform3D p_sfera = new Transform3D();
-        p_sfera.set(new Vector3f(0.5f, -0.4f, 0.0f));
+        p_sfera.set(new Vector3f(0.5f, -0.2f, 0.0f));
         TransformGroup sferaTG = new TransformGroup(p_sfera);
         sferaTG.addChild(mySphere);
         wholeTransformGroup.addChild(sferaTG);
-     //   sferaTG.setCapability(TransformGroup.ALLOW_COLLISION_BOUNDS_READ);
+
+        myColSphere = new CollisionDetector(sferaTG, mySphere.getBounds());
+        myColSphere.setSchedulingBounds(new BoundingSphere());
+        wholeTransformGroup.addChild(myColSphere);
+        
+        
+    
         
         
         myTransform2.setTranslation(new Vector3f(1.8f, 0.1f, 0.0f));
