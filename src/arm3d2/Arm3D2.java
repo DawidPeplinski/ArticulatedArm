@@ -60,7 +60,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private float myAngle = (float) (Math.PI/72);
     private boolean     klawisze[];
     private Timer zegar;
-    private SimpleUniverse simpleU;
+    private float sx, sy, sz;
+    
     
     public Arm3D2()
     {
@@ -87,7 +88,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         BranchGroup myScene = createMyScene();
         myScene.compile();
             
-        simpleU = new SimpleUniverse(myCanvas);
+        SimpleUniverse simpleU = new SimpleUniverse(myCanvas);
         
         // ustawienie początkowe kamery
         Transform3D observerTrans = new Transform3D();
@@ -440,9 +441,11 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             }
             if(klawisze[8]) 
             {
-             /*   Transform3D sferaTrans = new Transform3D();
-                sferaTrans.set(new Vector3f(0.0f, 1.0f, 0.0f));
-                sferaTG.setTransform(sferaTrans); */
+                sx = (float) (0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)));
+                sy = (float) (0.35f*(Math.sin(rot) + Math.sin(rot + rot1) + Math.sin(rot + rot1 + rot2)) - 0.2f);
+                Transform3D sferaTrans = new Transform3D();
+                sferaTrans.set(new Vector3f(sx, sy, 0.0f));
+                sferaTG.setTransform(sferaTrans); 
             }
            
            }
