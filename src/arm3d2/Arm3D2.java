@@ -61,6 +61,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private boolean     klawisze[];
     private Timer zegar;
     private float sx, sy, sz;
+    private boolean isGripped;
     
     
     public Arm3D2()
@@ -79,8 +80,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         pack();
         setVisible(true);
          
-        klawisze        = new boolean[9];
-        for(int i=0; i<9; i++) klawisze[i] = false;
+        klawisze        = new boolean[10];
+        for(int i=0; i<10; i++) klawisze[i] = false;
+        isGripped = false;
         
         zegar = new Timer();
         zegar.scheduleAtFixedRate(new Zadanie(),0,20);
@@ -268,7 +270,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         wholeTransformGroup.addChild(myColSphere);
                 
         
-        myTransform2.setTranslation(new Vector3f(1.8f, 0.1f, 0.0f));
+        myTransform2.setTranslation(new Vector3f(1.75f, 0.1f, 0.0f));
         myTransformGroup2.setTransform(myTransform2);
         
         myTransformGroup1.addChild(myTransformGroup2);
@@ -276,7 +278,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         myTransformGroup1.setTransform(myTransform1);
         
         myTransformGroup.addChild(myTransformGroup1);
-        myTransform.setTranslation(new Vector3f(1.0f, 1.0f, 0.0f));
+        myTransform.setTranslation(new Vector3f(0.8525f, 1.0f, 0.0f));
         myTransformGroup.setTransform(myTransform);
         
         cubeTransformGroup.addChild(myTransformGroup);
@@ -319,6 +321,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_Z:    klawisze[6] = true; break;
                     case KeyEvent.VK_X:   klawisze[7] = true; break;
                     case KeyEvent.VK_C:   klawisze[8] = true; break;
+                    case KeyEvent.VK_V:   klawisze[9] = true; break;
         }
     }
 
@@ -335,6 +338,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_Z:    klawisze[6] = false; break;
                     case KeyEvent.VK_X:   klawisze[7] = false; break;
                     case KeyEvent.VK_C:   klawisze[8] = false; break;
+                    case KeyEvent.VK_V:   klawisze[9] = false; break;
          }
     }
  
@@ -350,8 +354,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
               tmp_rot.rotZ(myAngle);
               myTransform.mul(tmp_rot);
               rot = (float) (rot + myAngle);
-              x = (float) (1.0f*(Math.cos(rot)));
-              y = (float) (1.0f*(Math.sin(rot)));
+              x = (float) (0.875f*(Math.cos(rot)));
+              y = (float) (0.875f*(Math.sin(rot)));
               myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
               myTransformGroup.setTransform(myTransform);
             }
@@ -361,8 +365,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 tmp_rot.rotZ(-myAngle);
                 myTransform.mul(tmp_rot);
                 rot = (float) (rot - myAngle);
-                x = (float) (1.0f*(Math.cos(rot)));
-                y = (float) (1.0f*(Math.sin(rot)));
+                x = (float) (0.875f*(Math.cos(rot)));
+                y = (float) (0.875f*(Math.sin(rot)));
                 myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
                 myTransformGroup.setTransform(myTransform);
             }
@@ -372,9 +376,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 tmp_rot.rotZ(myAngle);
                 myTransform1.mul(tmp_rot);
                 rot1 = (float) (rot1 + myAngle);
-                x1 = (float) (0.9f + 0.85f*(Math.cos(rot1)));
-                y1 = (float) (0.85f*(Math.sin(rot1)));
-                myTransform1.setTranslation(new Vector3f(x1, y1, 0.0f));
+                x1 = (float) (0.875f*(Math.cos(rot1)));
+                y1 = (float) (0.875f*(Math.sin(rot1)));
+                myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
             }
             if(klawisze[3]) 
@@ -383,9 +387,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 tmp_rot.rotZ(-myAngle);
                 myTransform1.mul(tmp_rot);
                 rot1 = (float) (rot1 - myAngle);
-                x1 = (float) (0.9f + 0.85f*(Math.cos(rot1)));
-                y1 = (float) (0.85f*(Math.sin(rot1)));
-                myTransform1.setTranslation(new Vector3f(x1, y1, 0.0f));
+                x1 = (float) (0.875f*(Math.cos(rot1)));
+                y1 = (float) (0.875f*(Math.sin(rot1)));
+                myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
             }
          //    if(klawisze[4] && ((rot + rot + rot2) < 3.14f )) 
@@ -395,9 +399,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 tmp_rot.rotZ(myAngle);
                 myTransform2.mul(tmp_rot);
                 rot2 = (float) (rot2 + myAngle);
-                x2 = (float) (0.9f + 0.9f*(Math.cos(rot2)));
-                y2 = (float) (0.1f + 0.9f*(Math.sin(rot2)));
-                myTransform2.setTranslation(new Vector3f(x2 , y2, 0.0f));
+                x2 = (float) (0.875f*(Math.cos(rot2)));
+                y2 = (float) (0.875f*(Math.sin(rot2)));
+                myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
             }
             if(klawisze[5])
@@ -406,9 +410,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 tmp_rot.rotZ(-myAngle);
                 myTransform2.mul(tmp_rot);
                 rot2 = (float) (rot2 - myAngle);
-                x2 = (float) (0.9f + 0.9f*(Math.cos(rot2)));
-                y2 = (float) (0.1f + 0.9f*(Math.sin(rot2)));
-                myTransform2.setTranslation(new Vector3f(x2, y2, 0.0f));
+                x2 = (float) (0.875f*(Math.cos(rot2)));
+                y2 = (float) (0.875f*(Math.sin(rot2)));
+                myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
             }
             if(klawisze[6])
@@ -441,10 +445,19 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             }
             if(klawisze[8]) 
             {
-                sx = (float) (0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)));
-                sy = (float) (0.35f*(Math.sin(rot) + Math.sin(rot + rot1) + Math.sin(rot + rot1 + rot2)) - 0.2f);
+                isGripped = true;
+            }
+            if(klawisze[9]) 
+            {
+                isGripped = false;
+            }
+            if(isGripped)
+            {
+                sx = (float) (Math.cos(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
+                sz = (float) (Math.sin(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
+                sy = (float) (0.35f*(Math.sin(rot) + Math.sin(rot + rot1) + Math.sin(rot + rot1 + rot2)) - 0.205f);
                 Transform3D sferaTrans = new Transform3D();
-                sferaTrans.set(new Vector3f(sx, sy, 0.0f));
+                sferaTrans.set(new Vector3f(sx, sy, sz));
                 sferaTG.setTransform(sferaTrans); 
             }
            
