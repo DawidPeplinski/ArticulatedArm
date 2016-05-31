@@ -3,6 +3,7 @@ package arm3d2;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
+import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.Cylinder;
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.image.TextureLoader;
@@ -59,6 +60,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private float myAngle = (float) (Math.PI/72);
     private boolean     klawisze[];
     private Timer zegar;
+    private SimpleUniverse simpleU;
     
     public Arm3D2()
     {
@@ -84,19 +86,27 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         
         BranchGroup myScene = createMyScene();
         myScene.compile();
+            
+        simpleU = new SimpleUniverse(myCanvas);
         
-        SimpleUniverse simpleU = new SimpleUniverse(myCanvas);
-        
+        // ustawienie początkowe kamery
         Transform3D observerTrans = new Transform3D();
-        observerTrans.set(new Vector3f(x, 0.0f, 2.5f));
-        
+        observerTrans.set(new Vector3f(0.0f, 0.0f, 2.5f));
+       
+        // obracanie kamery
+         OrbitBehavior orbitBeh = new OrbitBehavior(myCanvas, OrbitBehavior.REVERSE_ROTATE);
+        orbitBeh.setSchedulingBounds(new BoundingSphere());
+        simpleU.getViewingPlatform().setViewPlatformBehavior(orbitBeh);
+              
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(observerTrans);
+
         simpleU.addBranchGraph(myScene);
     }
     
     BranchGroup createMyScene()
     {
         mySceneBranch = new BranchGroup();
+        mySceneBranch.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
         
         baseTransformGroup = new TransformGroup();
         baseTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -120,26 +130,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         wholeTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
                 
         BoundingSphere bounds = new BoundingSphere();
-       
-        // obracanie kamery        
-        objRotate = new TransformGroup();
-        objRotate.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        objRotate.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-         
-        objRotate.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
-        objRotate.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
-        objRotate.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
-
-        mySceneBranch.addChild(objRotate);
-        
-        objRotate.addChild(wholeTransformGroup);
-
-        MouseRotate myMouseRotate = new MouseRotate();
-        
-        myMouseRotate.setTransformGroup(objRotate);
-        myMouseRotate.setSchedulingBounds(new BoundingSphere());
-        
-        mySceneBranch.addChild(myMouseRotate);
+    
+        mySceneBranch.addChild(wholeTransformGroup);
         
         // LIGHTS
         AmbientLight lightA = new AmbientLight();
@@ -265,7 +257,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         sferaTG = new TransformGroup(p_sfera);
         sferaTG.addChild(mySphere);
         
-        wholeTransformGroup.addChild(sferaTG);
+        mySceneBranch.addChild(sferaTG);
 
         sferaTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
@@ -273,10 +265,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         myColSphere = new CollisionDetector(sferaTG, mySphere.getBounds());
         myColSphere.setSchedulingBounds(new BoundingSphere());
         wholeTransformGroup.addChild(myColSphere);
-        
-        
-    
-        
+                
         
         myTransform2.setTranslation(new Vector3f(1.8f, 0.1f, 0.0f));
         myTransformGroup2.setTransform(myTransform2);
@@ -398,6 +387,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform1.setTranslation(new Vector3f(x1, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
             }
+         //    if(klawisze[4] && ((rot + rot + rot2) < 3.14f )) 
             if(klawisze[4])
             {
                 Transform3D  tmp_rot      = new Transform3D();
@@ -435,8 +425,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                
                // System.out.println("" + y2 + " " + rot2);
             }
-            if(klawisze[7]) 
-            {
+          if(klawisze[7])
+             {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotY(-myAngle);
                 mainTransform.mul(tmp_rot);

@@ -39,9 +39,8 @@ public class CollisionDetector extends Behavior
     {
        inCollision = false;
         this.ref_doTG = s;
-        s.setCollisionBounds(new BoundingSphere(new Point3d(), 0.01d));
-        ref_doTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        
+        s.setCollisionBounds(new BoundingSphere(new Point3d(), 0.015d));
+        ref_doTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE); 
     }
 
     @Override
