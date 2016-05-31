@@ -44,7 +44,7 @@ import javax.vecmath.Vector3f;
 
 public class Arm3D2 extends JFrame implements ActionListener, KeyListener
 {
-    private TransformGroup myTransformGroup, myTransformGroup1, myTransformGroup2, mainTransformGroup, baseTransformGroup, cubeTransformGroup;
+    private TransformGroup myTransformGroup, myTransformGroup1, myTransformGroup2, mainTransformGroup, baseTransformGroup, cubeTransformGroup, sferaTG;
     private TransformGroup wholeTransformGroup, objRotate;
     private Transform3D myTransform = new Transform3D();
     private Transform3D myTransform1 = new Transform3D();
@@ -52,12 +52,11 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private Transform3D mainTransform = new Transform3D();
     private Transform3D baseTransform = new Transform3D();
     private Transform3D cubeTransform = new Transform3D();
+    private BranchGroup mySceneBranch;
     private CollisionDetector myColSphere;
     private Sphere mySphere;
     private float x2, y2, x1, y1, x, y, x3, y3, rot1, rot2, rot, rot3;
     private float myAngle = (float) (Math.PI/72);
-    private Shape3D armPartsTab[] = new Shape3D[112];
-    private int number;
     private boolean     klawisze[];
     private Timer zegar;
     
@@ -77,8 +76,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         pack();
         setVisible(true);
          
-        klawisze        = new boolean[8];
-        for(int i=0; i<8; i++) klawisze[i] = false;
+        klawisze        = new boolean[9];
+        for(int i=0; i<9; i++) klawisze[i] = false;
         
         zegar = new Timer();
         zegar.scheduleAtFixedRate(new Zadanie(),0,20);
@@ -89,7 +88,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         SimpleUniverse simpleU = new SimpleUniverse(myCanvas);
         
         Transform3D observerTrans = new Transform3D();
-        observerTrans.set(new Vector3f(0.0f, 0.0f, 2.5f));
+        observerTrans.set(new Vector3f(x, 0.0f, 2.5f));
         
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(observerTrans);
         simpleU.addBranchGraph(myScene);
@@ -97,7 +96,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     
     BranchGroup createMyScene()
     {
-        BranchGroup mySceneBranch = new BranchGroup();
+        mySceneBranch = new BranchGroup();
         
         baseTransformGroup = new TransformGroup();
         baseTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -263,10 +262,14 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         mySphere = new Sphere(0.05f,Sphere.GENERATE_NORMALS | Sphere.GENERATE_TEXTURE_COORDS, sphere_app);
         Transform3D p_sfera = new Transform3D();
         p_sfera.set(new Vector3f(0.5f, -0.2f, 0.0f));
-        TransformGroup sferaTG = new TransformGroup(p_sfera);
+        sferaTG = new TransformGroup(p_sfera);
         sferaTG.addChild(mySphere);
+        
         wholeTransformGroup.addChild(sferaTG);
 
+        sferaTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        
+                                                                                                                            //////////////////////////
         myColSphere = new CollisionDetector(sferaTG, mySphere.getBounds());
         myColSphere.setSchedulingBounds(new BoundingSphere());
         wholeTransformGroup.addChild(myColSphere);
@@ -325,6 +328,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_D:    klawisze[5] = true; break;
                     case KeyEvent.VK_Z:    klawisze[6] = true; break;
                     case KeyEvent.VK_X:   klawisze[7] = true; break;
+                    case KeyEvent.VK_C:   klawisze[8] = true; break;
         }
     }
 
@@ -340,6 +344,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_D:    klawisze[5] = false; break;
                     case KeyEvent.VK_Z:    klawisze[6] = false; break;
                     case KeyEvent.VK_X:   klawisze[7] = false; break;
+                    case KeyEvent.VK_C:   klawisze[8] = false; break;
          }
     }
  
@@ -442,6 +447,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 y3 = (float) (-0.1f*(Math.sin(rot3)));
                 cubeTransform.setTranslation(new Vector3f(x3, -0.1f, 0.0f));
                 cubeTransformGroup.setTransform(cubeTransform);
+            }
+            if(klawisze[8]) 
+            {
+             /*   Transform3D sferaTrans = new Transform3D();
+                sferaTrans.set(new Vector3f(0.0f, 1.0f, 0.0f));
+                sferaTG.setTransform(sferaTrans); */
             }
            
            }
