@@ -22,6 +22,7 @@ import java.util.TimerTask;
 import javafx.scene.transform.Transform;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
+import javax.media.j3d.Background;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
@@ -135,6 +136,10 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         BoundingSphere bounds = new BoundingSphere();
     
         mySceneBranch.addChild(wholeTransformGroup);
+        
+        Background bg = new Background(new Color3f(0.12f, 0.13f, 0.17f));
+        bg.setApplicationBounds(bounds);
+        mySceneBranch.addChild(bg);
         
         // LIGHTS
         AmbientLight lightA = new AmbientLight();
@@ -256,7 +261,10 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         // Sfera
         mySphere = new Sphere(0.05f,Sphere.GENERATE_NORMALS | Sphere.GENERATE_TEXTURE_COORDS, sphere_app);
         Transform3D p_sfera = new Transform3D();
-        p_sfera.set(new Vector3f(0.5f, -0.2f, 0.0f));
+        sx = 0.5f;
+        sy = -0.45f;
+        sz = 0.0f;
+        p_sfera.set(new Vector3f(sx, sy, sz));
         sferaTG = new TransformGroup(p_sfera);
         sferaTG.addChild(mySphere);
         
@@ -450,6 +458,13 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             if(klawisze[9]) 
             {
                 isGripped = false;
+                if(!isGripped && (sy > -0.43f))
+            {
+                sy = sy - 0.05f;
+                Transform3D sferaTrans = new Transform3D();
+                sferaTrans.set(new Vector3f(sx, sy, sz));
+                sferaTG.setTransform(sferaTrans); 
+            }
             }
             if(isGripped)
             {
@@ -460,7 +475,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 sferaTrans.set(new Vector3f(sx, sy, sz));
                 sferaTG.setTransform(sferaTrans); 
             }
-           
+                    
            }
   }
     
