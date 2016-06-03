@@ -137,7 +137,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     
         mySceneBranch.addChild(wholeTransformGroup);
         
-        Background bg = new Background(new Color3f(0.12f, 0.13f, 0.17f));
+        Background bg = new Background(new Color3f(0.1f, 0.9f, 0.9f));
         bg.setApplicationBounds(bounds);
         mySceneBranch.addChild(bg);
         
@@ -198,7 +198,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         
         //textura sfery
         Appearance sphere_app = new Appearance();
-        loader = new TextureLoader("resources/pattern.jpg",this);
+        loader = new TextureLoader("resources/ball.jpg",this);
         image = loader.getImage();
         Texture2D sphere_tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
                                         image.getWidth(), image.getHeight());
