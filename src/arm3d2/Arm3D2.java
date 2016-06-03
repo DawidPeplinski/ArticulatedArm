@@ -137,7 +137,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     
         mySceneBranch.addChild(wholeTransformGroup);
         
-        Background bg = new Background(new Color3f(0.1f, 0.9f, 0.9f));
+        Background bg = new Background(new Color3f(0.8f, 0.9f, 0.9f));
         bg.setApplicationBounds(bounds);
         mySceneBranch.addChild(bg);
         
