@@ -18,6 +18,8 @@ public class CollisionDetector extends Behavior
     private WakeupOnCollisionEntry wEnter;
     private WakeupOnCollisionExit wExit;
     private  TransformGroup ref_doTG = new TransformGroup();
+    private String obj;
+    private double r;
    
     
     public boolean getinCollision()
@@ -35,11 +37,13 @@ public class CollisionDetector extends Behavior
         ref_doTG.setTransform(buf);
     }
     
-    public CollisionDetector(TransformGroup s, Bounds colBounds)
+    public CollisionDetector(TransformGroup s, Bounds colBounds, String name, double pr)
     {
+        obj = name;
+        r = pr;
        inCollision = false;
         this.ref_doTG = s;
-        s.setCollisionBounds(new BoundingSphere(new Point3d(), 0.015d));
+        s.setCollisionBounds(new BoundingSphere(new Point3d(), r));
         ref_doTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE); 
     }
 
@@ -58,12 +62,12 @@ public class CollisionDetector extends Behavior
         inCollision = !inCollision;
         if(inCollision)
         {
-            System.out.println("in");
+            System.out.println(obj + " in");
             wakeupOn(wExit);
         }
         else
         {
-            System.out.println("out");
+            System.out.println(obj + "out");
             wakeupOn(wEnter);
         }
     }

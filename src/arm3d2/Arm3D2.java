@@ -55,11 +55,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private Transform3D baseTransform = new Transform3D();
     private Transform3D cubeTransform = new Transform3D();
     private BranchGroup mySceneBranch;
-    private CollisionDetector myColSphere;
+    private CollisionDetector myColSphere, myColGripper;
     private Sphere mySphere;
     private float x2, y2, x1, y1, x, y, x3, y3, rot1, rot2, rot, rot3, rot4, rot5;
     private float myAngle = (float) (Math.PI/72);
     private boolean     klawisze[];
+    private int numOfKeys;
     private Timer zegar;
     private float sx, sy, sz;
     private boolean isGripped;
@@ -81,8 +82,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         pack();
         setVisible(true);
          
-        klawisze        = new boolean[10];
-        for(int i=0; i<10; i++) klawisze[i] = false;
+        numOfKeys = 13;
+        klawisze        = new boolean[numOfKeys];
+        for(int i=0; i<numOfKeys; i++) klawisze[i] = false;
         isGripped = false;
         
         zegar = new Timer();
@@ -234,6 +236,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
          Shape3D Scene1_shape = (Shape3D)Scene1.getSceneGroup().getChild(0);
          Scene1_shape.setAppearance(arms_app);
          
+         
+         
         // wygląd maina i chwytaka             
          Appearance main_app = new Appearance();
         Material main_mat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
@@ -273,13 +277,16 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         sferaTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
                                                                                                                             //////////////////////////
-        myColSphere = new CollisionDetector(sferaTG, mySphere.getBounds());
-        myColSphere.setSchedulingBounds(new BoundingSphere());
-        wholeTransformGroup.addChild(myColSphere);
-                
-        
+     //   myColSphere = new CollisionDetector(sferaTG, mySphere.getBounds(), "Sfera", 0.015d);
+     //   myColSphere.setSchedulingBounds(new BoundingSphere());
+    //    wholeTransformGroup.addChild(myColSphere);
+                        
         myTransform2.setTranslation(new Vector3f(1.75f, 0.1f, 0.0f));
         myTransformGroup2.setTransform(myTransform2);
+        
+        myColGripper = new CollisionDetector(myTransformGroup2, Scene2_shape.getBounds(), "Gripper", 0.5d);
+        myColGripper.setSchedulingBounds(new BoundingSphere());
+        wholeTransformGroup.addChild(myColGripper);
         
         myTransformGroup1.addChild(myTransformGroup2);
         myTransform1.setTranslation(new Vector3f(1.75f, 0.0f, 0.0f));
@@ -330,6 +337,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_X:   klawisze[7] = true; break;
                     case KeyEvent.VK_C:   klawisze[8] = true; break;
                     case KeyEvent.VK_V:   klawisze[9] = true; break;
+                    case KeyEvent.VK_R:   klawisze[10] = true; break;
+                    case KeyEvent.VK_T:   klawisze[11] = true; break;
+                    case KeyEvent.VK_Y:   klawisze[12] = true; break;
         }
     }
 
@@ -347,6 +357,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_X:   klawisze[7] = false; break;
                     case KeyEvent.VK_C:   klawisze[8] = false; break;
                     case KeyEvent.VK_V:   klawisze[9] = false; break;
+                    case KeyEvent.VK_R:   klawisze[10] = false; break;
+                    case KeyEvent.VK_T:   klawisze[11] = false; break;
+                    case KeyEvent.VK_Y:   klawisze[12] = false; break;
          }
     }
  
@@ -358,6 +371,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
 
             if(klawisze[0])
             {
+                if(rot < Math.PI)
+                {
               Transform3D  tmp_rot      = new Transform3D();
               tmp_rot.rotZ(myAngle);
               myTransform.mul(tmp_rot);
@@ -367,9 +382,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
               myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
               myTransformGroup.setTransform(myTransform);
               if(isGripped) rot5 = rot5 + myAngle;
+                }
             }
             if(klawisze[1])
             {
+                if(rot > 0)
+                {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(-myAngle);
                 myTransform.mul(tmp_rot);
@@ -379,9 +397,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
                 myTransformGroup.setTransform(myTransform);
                 if(isGripped) rot5 = rot5 - myAngle;
+                }
             }
             if(klawisze[2])
             {
+                if(rot1 < 3*Math.PI/4)
+                {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(myAngle);
                 myTransform1.mul(tmp_rot);
@@ -391,9 +412,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
                 if(isGripped) rot5 = rot5 + myAngle;
+                }
             }
             if(klawisze[3]) 
             {
+                if(rot1 > -3*Math.PI/4)
+                {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(-myAngle);
                 myTransform1.mul(tmp_rot);
@@ -403,10 +427,13 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
                 if(isGripped) rot5 = rot5 - myAngle;
+                }
             }
          //    if(klawisze[4] && ((rot + rot + rot2) < 3.14f )) 
             if(klawisze[4])
             {
+                if(rot2 < 3*Math.PI/4)
+                {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(myAngle);
                 myTransform2.mul(tmp_rot);
@@ -416,9 +443,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
                 if(isGripped) rot5 = rot5 + myAngle;
+                }
             }
             if(klawisze[5])
             {
+                if(rot2 > -3*Math.PI/4)
+                {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(-myAngle);
                 myTransform2.mul(tmp_rot);
@@ -428,6 +458,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
                 if(isGripped) rot5 = rot5 - myAngle;
+                }
             }
             if(klawisze[6])
             {
@@ -460,7 +491,8 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             }
             if(klawisze[8]) 
             {
-                isGripped = true;
+                float buff = (float) (0.35f*(Math.sin(rot) + Math.sin(rot + rot1) + Math.sin(rot + rot1 + rot2)) - 0.205f);
+                if(myColGripper.inCollision && ((buff - sy) < 0.1d)) isGripped = true;
             }
             if(klawisze[9]) 
             {
