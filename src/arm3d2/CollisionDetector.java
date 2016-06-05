@@ -59,6 +59,7 @@ public class CollisionDetector extends Behavior
     @Override
     public void processStimulus(Enumeration criteria) 
     {
+        
         inCollision = !inCollision;
         if(inCollision)
         {
@@ -67,7 +68,7 @@ public class CollisionDetector extends Behavior
         }
         else
         {
-            System.out.println(obj + "out");
+            System.out.println(obj + " out");
             wakeupOn(wEnter);
         }
     }
