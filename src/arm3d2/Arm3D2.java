@@ -67,7 +67,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private Timer zegar;
     private float sx, sy, sz;
     private boolean isGripped, upCol, downCol, isRec, isPlay, RisGripped;
-    private ArrayList<String> recList = new ArrayList<String>();
+    private ArrayList<String> recList;
     private int recSize, recInd;
     
     
@@ -548,7 +548,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 buffX = (float) (Math.cos(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
                 buffZ = (float) (Math.sin(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
                 buffY = (float) (0.35f*(Math.sin(rot) + Math.sin(rot + rot1) + Math.sin(rot + rot1 + rot2)) - 0.205f);
-                if( ((buffY - sy) < 0.05d) && ((buffX - sx) < 0.05d) && ((buffX - sx) > -0.05d) && ((buffZ - sz) < 0.05d) && ((buffZ - sz) > -0.05d)) isGripped = true;
+                if( ((buffY - sy) < 0.1d) && ((buffX - sx) < 0.1d) && ((buffX - sx) > -0.1d) && ((buffZ - sz) < 0.1d) && ((buffZ - sz) > -0.1d)) isGripped = true;
                 if(isRec) recList.add("c");
             }
             if(klawisze[9] || (isPlay && "v".equals(recList.get(recInd)))) 
@@ -591,6 +591,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 if(!isRec)
                 { Rx2 = x2; Ry2 = y2; Rx1 = x1; Ry1 = y1; Rx = x; Ry = y; Rx3 = x3; Ry3 = y3; Rrot1 = rot1; Rrot2 = rot2; Rrot = rot; Rrot3 = rot3; Rrot4 = rot4; Rrot5 = rot5; Rsx = sx; Rsy = sy; Rsz = sz;
                     RisGripped = isGripped;
+                    recList = new ArrayList<String>();
                     System.out.println("Recording...");
                 }
                 isRec = true;
@@ -664,6 +665,11 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 isPlay = true;
             }
            if(isPlay) recInd++;
+           if(recInd == recSize)
+           {
+               isPlay = false;
+               recInd = 0;
+           }
            }
   }
     
