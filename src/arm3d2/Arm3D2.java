@@ -48,7 +48,7 @@ import javax.vecmath.Vector3f;
 public class Arm3D2 extends JFrame implements ActionListener, KeyListener
 {
     private TransformGroup myTransformGroup, myTransformGroup1, myTransformGroup2, mainTransformGroup, baseTransformGroup, cubeTransformGroup, sferaTG;
-    private TransformGroup wholeTransformGroup, objRotate;
+    private TransformGroup wholeTransformGroup;
     private Transform3D myTransform = new Transform3D();
     private Transform3D myTransform1 = new Transform3D();
     private Transform3D myTransform2 = new Transform3D();
@@ -283,7 +283,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                                                                                                 //////////////////////////////////
         Sphere colSf = new Sphere(0.0001f);
         Transform3D colfSfTr = new Transform3D();
-        colfSfTr.setTranslation(new Vector3f(0.9f, 0.0f, 0.0f));
+        colfSfTr.setTranslation(new Vector3f(1.2f, 0.0f, 0.0f));
         TransformGroup colSftg = new TransformGroup(colfSfTr);
         colSftg.addChild(colSf);
         myTransformGroup2.addChild(colSftg);
