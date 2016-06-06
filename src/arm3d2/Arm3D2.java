@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,12 +60,15 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private CollisionDetector myColGripper;
     private Sphere mySphere;
     private float x2, y2, x1, y1, x, y, x3, y3, rot1, rot2, rot, rot3, rot4, rot5;
+    private float Rx2, Ry2, Rx1, Ry1, Rx, Ry, Rx3, Ry3, Rrot1, Rrot2, Rrot, Rrot3, Rrot4, Rrot5, Rsx, Rsy, Rsz;
     private float myAngle = (float) (Math.PI/72);
     private boolean     klawisze[];
     private int numOfKeys;
     private Timer zegar;
     private float sx, sy, sz;
-    private boolean isGripped, upCol, downCol;
+    private boolean isGripped, upCol, downCol, isRec, isPlay, RisGripped;
+    private ArrayList<String> recList = new ArrayList<String>();
+    private int recSize, recInd;
     
     
     public Arm3D2()
@@ -89,6 +93,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         isGripped = false;
         upCol = false;
         downCol = false;
+        isRec = false;
+        isPlay = false;
+        recInd = 0;
         
         zegar = new Timer();
         zegar.scheduleAtFixedRate(new Zadanie(),0,20);
@@ -377,7 +384,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         public void run()
         {
 
-            if(klawisze[0])
+            if(klawisze[0] || (isPlay && "q".equals(recList.get(recInd))))
             {
                 if(rot < Math.PI)
                 {
@@ -392,12 +399,13 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
               myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
               myTransformGroup.setTransform(myTransform);
               if(isGripped) rot5 = rot5 + myAngle;
+              if(isRec) recList.add("q");
                     }
               if(myColGripper.inCollision && !downCol) upCol = true;
               if(!myColGripper.inCollision && upCol) upCol = false;
                 }
             }
-            if(klawisze[1])
+            if(klawisze[1] || (isPlay && "a".equals(recList.get(recInd))))
             {
                 if(rot > 0)
                 {
@@ -412,12 +420,13 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
                 myTransformGroup.setTransform(myTransform);
                 if(isGripped) rot5 = rot5 - myAngle;
+                if(isRec) recList.add("a");
                     }
                 if(myColGripper.inCollision && !upCol) downCol = true;
                 if(!myColGripper.inCollision && downCol) downCol = false;
                 }
             }
-            if(klawisze[2])
+            if(klawisze[2] || (isPlay && "w".equals(recList.get(recInd))))
             {
                 if(rot1 < 3*Math.PI/4)
                 {
@@ -432,12 +441,13 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
                 if(isGripped) rot5 = rot5 + myAngle;
+                if(isRec) recList.add("w");
                 }
               if(myColGripper.inCollision && !downCol) upCol = true;
               if(!myColGripper.inCollision && upCol) upCol = false;
                 }
             }
-            if(klawisze[3]) 
+            if(klawisze[3] || (isPlay && "s".equals(recList.get(recInd)))) 
             {
                 if(rot1 > -3*Math.PI/4)
                 {
@@ -452,13 +462,13 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
                 if(isGripped) rot5 = rot5 - myAngle;
+                if(isRec) recList.add("s");
                 }
                 if(myColGripper.inCollision && !upCol) downCol = true;
                 if(!myColGripper.inCollision && downCol) downCol = false;
                 }
             }
-         //    if(klawisze[4] && ((rot + rot + rot2) < 3.14f )) 
-            if(klawisze[4])
+            if(klawisze[4] || (isPlay && "e".equals(recList.get(recInd))))
             {
                 if(rot2 < 3*Math.PI/4)
                 {
@@ -473,12 +483,13 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
                 if(isGripped) rot5 = rot5 + myAngle;
+                if(isRec) recList.add("e");
                 }
               if(myColGripper.inCollision && !downCol) upCol = true;
               if(!myColGripper.inCollision && upCol) upCol = false;
                 }
             }
-            if(klawisze[5])
+            if(klawisze[5] || (isPlay && "d".equals(recList.get(recInd))))
             {
                 if(rot2 > -3*Math.PI/4)
                 {
@@ -493,12 +504,13 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
                 if(isGripped) rot5 = rot5 - myAngle;
+                if(isRec) recList.add("d");
                 }
                 if(myColGripper.inCollision && !upCol) downCol = true;
                 if(!myColGripper.inCollision && downCol) downCol = false;
                 }
             }
-            if(klawisze[6])
+            if(klawisze[6] || (isPlay && "z".equals(recList.get(recInd))))
             {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotY(myAngle);
@@ -512,8 +524,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 cubeTransform.setTranslation(new Vector3f(x3, -0.1f, 0.0f));
                 cubeTransformGroup.setTransform(cubeTransform);  
                 if(isGripped) rot4 = rot4 + myAngle;
+                if(isRec) recList.add("z");
             }
-          if(klawisze[7])
+          if(klawisze[7] || (isPlay && "x".equals(recList.get(recInd))))
              {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotY(-myAngle);
@@ -527,18 +540,21 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 cubeTransform.setTranslation(new Vector3f(x3, -0.1f, 0.0f));
                 cubeTransformGroup.setTransform(cubeTransform);
                 if(isGripped) rot4 = rot4 - myAngle;
+                if(isRec) recList.add("x");
             }
-            if(klawisze[8] && !isGripped) 
+            if(klawisze[8] && !isGripped || (isPlay && "c".equals(recList.get(recInd)))) 
             {
                 float buffY, buffZ, buffX;
                 buffX = (float) (Math.cos(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
                 buffZ = (float) (Math.sin(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
                 buffY = (float) (0.35f*(Math.sin(rot) + Math.sin(rot + rot1) + Math.sin(rot + rot1 + rot2)) - 0.205f);
                 if( ((buffY - sy) < 0.05d) && ((buffX - sx) < 0.05d) && ((buffX - sx) > -0.05d) && ((buffZ - sz) < 0.05d) && ((buffZ - sz) > -0.05d)) isGripped = true;
+                if(isRec) recList.add("c");
             }
-            if(klawisze[9]) 
+            if(klawisze[9] || (isPlay && "v".equals(recList.get(recInd)))) 
             {
                 isGripped = false;
+                if(isRec) recList.add("v");
                 if(!isGripped && (sy > -0.43f))
             {
                 sy = sy - 0.05f;
@@ -550,7 +566,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 tmp_rot2.rotZ(rot5);
                 sferaTrans.mul(tmp_rot);
                 sferaTrans.mul(tmp_rot2);
-                sferaTG.setTransform(sferaTrans);  
+                sferaTG.setTransform(sferaTrans);
             }
             }
             if(isGripped)
@@ -568,7 +584,86 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 sferaTrans.mul(tmp_rot2);
                 sferaTG.setTransform(sferaTrans); 
             }
-                    
+            
+            
+            if(klawisze[10])
+            {
+                if(!isRec)
+                { Rx2 = x2; Ry2 = y2; Rx1 = x1; Ry1 = y1; Rx = x; Ry = y; Rx3 = x3; Ry3 = y3; Rrot1 = rot1; Rrot2 = rot2; Rrot = rot; Rrot3 = rot3; Rrot4 = rot4; Rrot5 = rot5; Rsx = sx; Rsy = sy; Rsz = sz;
+                    RisGripped = isGripped;
+                    System.out.println("Recording...");
+                }
+                isRec = true;
+            }
+            if(klawisze[11])
+            {
+                if(isRec)
+                {
+                recSize = recList.size();
+                System.out.println("Recording stopped.");
+                }
+                 isRec = false;
+            }
+            if(klawisze[12])
+            {
+                if(!isPlay && !isRec && recSize>0)
+                {
+                Transform3D  tmp_rot = new Transform3D();
+                myTransform = new Transform3D();
+                myTransform.setTranslation(new Vector3f(0.8525f, 1.0f, 0.0f));
+                tmp_rot.rotZ(Rrot);
+                myTransform.mul(tmp_rot);
+                if(Rx != 0)
+                myTransform.setTranslation(new Vector3f(Rx, Ry + 1.0f, 0.0f));
+                myTransformGroup.setTransform(myTransform);
+                
+                tmp_rot      = new Transform3D();
+                myTransform1 = new Transform3D();
+                myTransform1.setTranslation(new Vector3f(1.75f, 0.0f, 0.0f));
+                tmp_rot.rotZ(Rrot1);
+                myTransform1.mul(tmp_rot);
+                if(Rx1 != 0)
+                myTransform1.setTranslation(new Vector3f(Rx1 + 0.875f, Ry1, 0.0f));
+                myTransformGroup1.setTransform(myTransform1);
+                
+                tmp_rot      = new Transform3D();
+                myTransform2 = new Transform3D();
+                myTransform2.setTranslation(new Vector3f(1.75f, 0.1f, 0.0f));
+                tmp_rot.rotZ(Rrot2);
+                myTransform2.mul(tmp_rot);
+                if(Rx2 != 0)                
+                myTransform2.setTranslation(new Vector3f(Rx2 + 0.875f , Ry2 + 0.1f, 0.0f));
+                myTransformGroup2.setTransform(myTransform2);
+                
+                tmp_rot      = new Transform3D();
+                mainTransform = new Transform3D();
+                cubeTransform = new Transform3D();
+                tmp_rot.rotY(Rrot3);
+                mainTransform.setScale(0.3d);
+                mainTransform.setTranslation(new Vector3f(0.0f, 0.8f, 0.08f));
+                mainTransform.mul(tmp_rot);
+                mainTransformGroup.setTransform(mainTransform);
+                cubeTransform.mul(tmp_rot);
+                cubeTransform.setTranslation(new Vector3f(Rx3, -0.1f, 0.0f));
+                cubeTransformGroup.setTransform(cubeTransform);
+                
+                Transform3D sferaTrans = new Transform3D();
+                sferaTrans.set(new Vector3f(Rsx, Rsy, Rsz));
+                tmp_rot = new Transform3D();
+                Transform3D tmp_rot2 = new Transform3D();
+                tmp_rot.rotY(Rrot4);
+                tmp_rot2.rotZ(Rrot5);
+                sferaTrans.mul(tmp_rot);
+                sferaTrans.mul(tmp_rot2);
+                sferaTG.setTransform(sferaTrans); 
+                
+                x2 = Rx2; y2 = Ry2; x1 = Rx1; y1 = Ry1; x = Rx; y = Ry; x3 = Rx3; y3 = Ry3; rot1 = Rrot1; rot2 = Rrot2; rot = Rrot; rot3 = Rrot3; rot4 = Rrot4; rot5 = Rrot5; sx = Rsx; sy = Rsy; sz = Rsz;
+                    isGripped = RisGripped;
+                    System.out.println("Playing...");
+                }
+                isPlay = true;
+            }
+           if(isPlay) recInd++;
            }
   }
     
