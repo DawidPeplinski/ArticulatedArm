@@ -87,7 +87,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         pack();
         setVisible(true);
          
-        numOfKeys = 13;
+        numOfKeys = 14;
         klawisze        = new boolean[numOfKeys];
         for(int i=0; i<numOfKeys; i++) klawisze[i] = false;
         isGripped = false;
@@ -355,6 +355,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_R:   klawisze[10] = true; break;
                     case KeyEvent.VK_T:   klawisze[11] = true; break;
                     case KeyEvent.VK_Y:   klawisze[12] = true; break;
+                    case KeyEvent.VK_U:   klawisze[13] = true; break;
         }
     }
 
@@ -375,6 +376,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_R:   klawisze[10] = false; break;
                     case KeyEvent.VK_T:   klawisze[11] = false; break;
                     case KeyEvent.VK_Y:   klawisze[12] = false; break;
+                    case KeyEvent.VK_U:   klawisze[13] = false; break;
          }
     }
  
@@ -607,8 +609,30 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             }
             if(klawisze[12])
             {
-                if(!isPlay && !isRec && recSize>0)
+                if(!isPlay && !isRec && recSize>0) recInit();
+                System.out.println("Playing...");
+                isPlay = true;
+            }
+            if(klawisze[13])
+            {
+                if(isPlay)
                 {
+                    System.out.println("Playing Stopped");
+                    isPlay = false;
+                    recInd = 0;
+                }
+            }
+           if(isPlay) recInd++;
+           if(recInd == recSize && isPlay)
+           {
+               recInit();
+               recInd = 0;
+           }
+           }
+  }
+    
+    public void recInit()
+   {
                 Transform3D  tmp_rot = new Transform3D();
                 myTransform = new Transform3D();
                 myTransform.setTranslation(new Vector3f(0.8525f, 1.0f, 0.0f));
@@ -660,17 +684,6 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 
                 x2 = Rx2; y2 = Ry2; x1 = Rx1; y1 = Ry1; x = Rx; y = Ry; x3 = Rx3; y3 = Ry3; rot1 = Rrot1; rot2 = Rrot2; rot = Rrot; rot3 = Rrot3; rot4 = Rrot4; rot5 = Rrot5; sx = Rsx; sy = Rsy; sz = Rsz;
                     isGripped = RisGripped;
-                    System.out.println("Playing...");
-                }
-                isPlay = true;
-            }
-           if(isPlay) recInd++;
-           if(recInd == recSize)
-           {
-               isPlay = false;
-               recInd = 0;
-           }
-           }
   }
     
     public static void main(String[] args)
