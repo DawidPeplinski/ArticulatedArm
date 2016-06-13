@@ -2,14 +2,12 @@ package arm3d2;
 
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
-import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.Cylinder;
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
@@ -18,10 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Timer;
 import java.util.TimerTask;
-import javafx.scene.transform.Transform;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Background;
@@ -30,14 +26,11 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.Geometry;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Material;
-import javax.media.j3d.SceneGraphPath;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
-import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JButton;
@@ -45,8 +38,6 @@ import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JPanel;
 import javax.vecmath.Color3f;
-import javax.vecmath.Color4f;
-import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
 public class Arm3D2 extends JFrame implements ActionListener, KeyListener
@@ -75,7 +66,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private JButton recB, playB;
     
     public Arm3D2()
-    {
+    {                                                                           //tworzenie okienka, dodanie panelu i przycisków
         super("Articulated Arm");
         setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -99,13 +90,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         playB.addActionListener(this);
         
         recB.setFocusable(false);
-        playB.setFocusable(false);
-        
+        playB.setFocusable(false);       
         
         add(myCanvas);
         pack();
         setVisible(true);
-         
+                                                                                // wartości początkowe pól
         numOfKeys = 10;
         klawisze        = new boolean[numOfKeys];
         for(int i=0; i<numOfKeys; i++) klawisze[i] = false;
@@ -115,7 +105,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         isRec = false;
         isPlay = false;
         recInd = 0;
-        
+                                                                                // inicjalizacja timera obsługującego animację
         zegar = new Timer();
         zegar.scheduleAtFixedRate(new Zadanie(),0,20);
         
@@ -124,11 +114,11 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             
         SimpleUniverse simpleU = new SimpleUniverse(myCanvas);
         
-        // ustawienie początkowe kamery
+                                                                                // ustawienie początkowe kamery
         Transform3D observerTrans = new Transform3D();
         observerTrans.set(new Vector3f(0.0f, 0.0f, 2.5f));
        
-        // obracanie kamery
+                                                                                // obracanie kamery
          OrbitBehavior orbitBeh = new OrbitBehavior(myCanvas, OrbitBehavior.REVERSE_ROTATE);
         orbitBeh.setSchedulingBounds(new BoundingSphere());
         simpleU.getViewingPlatform().setViewPlatformBehavior(orbitBeh);
@@ -139,7 +129,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     }
     
     BranchGroup createMyScene()
-    {
+    {                                                                           // dodanie TransformGroupów poszczególnych elementów
         mySceneBranch = new BranchGroup();
         mySceneBranch.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
         
@@ -172,7 +162,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         bg.setApplicationBounds(bounds);
         mySceneBranch.addChild(bg);
         
-        // LIGHTS
+                                                                                // światła
         AmbientLight lightA = new AmbientLight();
         lightA.setInfluencingBounds(bounds);
         wholeTransformGroup.addChild(lightA);
@@ -189,7 +179,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         lightE.setColor(new Color3f(1.0f, 1.0f, 1.0f));
         wholeTransformGroup.addChild(lightE);
         
-        // ładuję model
+                                                                                // ładuję model
         Scene baseScene = null;
         Scene mainScene = null;
         Scene Scene0 = null;
@@ -197,7 +187,6 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         Scene Scene2 = null;
         try {
             ObjectFile f = new ObjectFile();
-            //f.setFlags ( ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY);
             f.setFlags(ObjectFile.LOAD_BACKGROUND_NODES | ObjectFile.STRIPIFY | ObjectFile.RESIZE);
             baseScene = f.load("resources/base.obj");
             mainScene = f.load("resources/main.obj");
@@ -216,7 +205,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         baseTransform.setScale(0.2);
         mainTransform.setScale(0.3);
                          
-         // textura podłoża
+                                                                                // textura podłoża
         Appearance ground_app = new Appearance(); 
         TextureLoader loader = new TextureLoader("resources/ground.png",null);
         ImageComponent2D image = loader.getImage();
@@ -227,7 +216,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         ground.setBoundaryModeT(Texture.WRAP);
         ground_app.setTexture(ground);
         
-        //textura sfery
+                                                                                //textura sfery
         Appearance sphere_app = new Appearance();
         loader = new TextureLoader("resources/ball.jpg",this);
         image = loader.getImage();
@@ -238,7 +227,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         sphere_tex.setBoundaryModeT(Texture.WRAP);
         sphere_app.setTexture(sphere_tex);
         
-        //wygląd podstawy robota
+                                                                                //wygląd podstawy robota
         Appearance base_app = new Appearance();
         Material baseMat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
                                              new Color3f(0.459f, 0.518f, 0.237f), new Color3f(1.0f, 1.0f, 1.0f), 80.0f);
@@ -250,7 +239,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
          Shape3D base_shape = (Shape3D)baseScene.getSceneGroup().getChild(0);
          base_shape.setAppearance(base_app);
          
-         //wygląd ramion robota
+                                                                                //wygląd ramion robota
         Appearance arms_app = new Appearance();
         Material armsMat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
                                              new Color3f(0.9f, 0.9f, 0.4f), new Color3f(1.0f, 1.0f, 1.0f), 80.0f);
@@ -265,9 +254,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
          Shape3D Scene1_shape = (Shape3D)Scene1.getSceneGroup().getChild(0);
          Scene1_shape.setAppearance(arms_app);
          
-         
-         
-        // wygląd maina i chwytaka             
+                                                                                // wygląd podstawy robota i chwytaka             
          Appearance main_app = new Appearance();
         Material main_mat = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.0f,0.0f,0.3f),
                                              new Color3f(0.7f, 0.7f, 0.4f), new Color3f(1.0f, 1.0f, 1.0f), 80.0f);
@@ -281,7 +268,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
          Shape3D Scene2_shape = (Shape3D)Scene2.getSceneGroup().getChild(0);
          Scene2_shape.setAppearance(main_app);
          
-         //Podstawa ramienia
+                                                                                //Podłoże ramienia
         Cylinder podstawa = new Cylinder(1.0f,0.2f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, ground_app);
         
         podstawa.setAppearance(ground_app);
@@ -291,7 +278,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         podstawa_transGroup.addChild(podstawa);
         wholeTransformGroup.addChild(podstawa_transGroup);
         
-        // Sfera
+                                                                                // Sfera/prymityw
         mySphere = new Sphere(0.05f,Sphere.GENERATE_NORMALS | Sphere.GENERATE_TEXTURE_COORDS, sphere_app);
         Transform3D p_sfera = new Transform3D();
         sx = 0.5f;
@@ -305,8 +292,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         mySceneBranch.addChild(sferaTG);
 
         sferaTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        
-                                                                                                //////////////////////////////////
+                                                                                // inicjalizacja detekcji kolizji
         Sphere colSf = new Sphere(0.0001f);
         Transform3D colfSfTr = new Transform3D();
         colfSfTr.setTranslation(new Vector3f(1.2f, 0.0f, 0.0f));
@@ -314,7 +300,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         colSftg.addChild(colSf);
         myTransformGroup2.addChild(colSftg);
         Scene2_shape.setCollidable(false);
-    
+                                                                                // dodanie elementów do przypisanych im TG, początowe przesunięcia
         myTransform2.setTranslation(new Vector3f(1.75f, 0.1f, 0.0f));
         myTransformGroup2.setTransform(myTransform2);
         
@@ -347,7 +333,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) 
+    public void actionPerformed(ActionEvent e)                                  // obsługa przycisków w okienku, nagrywanie i odtwarzanie
     {
         if(e.getSource()==recB)
         {
@@ -387,13 +373,10 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     }
 
     @Override
-    public void keyTyped(KeyEvent e) 
-    {
-
-    }
+    public void keyTyped(KeyEvent e) {  }
 
     @Override
-    public void keyPressed(KeyEvent e) 
+    public void keyPressed(KeyEvent e)                                          // obsługa przycisków klawiatury, możliwość wciskania kilku na raz
     {
         switch(e.getKeyCode()){
                     case KeyEvent.VK_Q:      klawisze[0] = true; break;
@@ -429,7 +412,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     class Zadanie extends TimerTask{
 
         @Override
-        public void run()
+        public void run()                                                       // animacja, obsługa wciśniętych przycisków, obliczanie pozycji poszczególnych elementów
         {
 
             if(klawisze[0] || (isPlay && "q".equals(recList.get(recInd))))
@@ -590,7 +573,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 if(isGripped) rot4 = rot4 - myAngle;
                 if(isRec) recList.add("x");
             }
-            if(klawisze[8] && !isGripped || (isPlay && "c".equals(recList.get(recInd)))) 
+            if(klawisze[8] && !isGripped || (isPlay && "c".equals(recList.get(recInd))))                    // obliczanie pozycji chwytaka na podstawie kinematyki prostej
             {
                 float buffY, buffZ, buffX;
                 buffX = (float) (Math.cos(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
@@ -599,7 +582,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 if( ((buffY - sy) < 0.1d) && ((buffX - sx) < 0.1d) && ((buffX - sx) > -0.1d) && ((buffZ - sz) < 0.1d) && ((buffZ - sz) > -0.1d)) isGripped = true;
                 if(isRec) recList.add("c");
             }
-            if(klawisze[9] || (isPlay && "v".equals(recList.get(recInd)))) 
+            if(klawisze[9] || (isPlay && "v".equals(recList.get(recInd))))                  // obracanie sfery w chwytaku
             {
                 isGripped = false;
                 if(isRec) recList.add("v");
@@ -617,7 +600,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 sferaTG.setTransform(sferaTrans);
             }
             }
-            if(isGripped)
+            if(isGripped)                                                       // ustawianie sfery na końcu chwytaka, jeżeli jest złapana
             {
                 sx = (float) (Math.cos(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
                 sz = (float) (Math.sin(-rot3)*(0.35f*(Math.cos(rot) + Math.cos(rot + rot1) + Math.cos(rot + rot1 + rot2)) - 0.025f));
@@ -632,7 +615,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 sferaTrans.mul(tmp_rot2);
                 sferaTG.setTransform(sferaTrans); 
             }
-           if(isPlay) recInd++;
+           if(isPlay) recInd++;                                                 // warunki do odtwarzania trajektorii
            if(recInd == recSize && isPlay)
            {
                recInit();
@@ -641,14 +624,14 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
            }
   }
     
-    public void recInit()
+    public void recInit()                                                       // ustawienie wszystkich elemetów w pozycji zapisanej po wciśnięciu przycisku nagrywania
    {
                 Transform3D  tmp_rot = new Transform3D();
                 myTransform = new Transform3D();
                 myTransform.setTranslation(new Vector3f(0.8525f, 1.0f, 0.0f));
                 tmp_rot.rotZ(Rrot);
                 myTransform.mul(tmp_rot);
-                if(Rx != 0)
+                if(Rx != 0)                                                     // w przypadku nagrywania po samym starcie programu
                 myTransform.setTranslation(new Vector3f(Rx, Ry + 1.0f, 0.0f));
                 myTransformGroup.setTransform(myTransform);
                 
@@ -682,7 +665,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 cubeTransform.setTranslation(new Vector3f(Rx3, -0.1f, 0.0f));
                 cubeTransformGroup.setTransform(cubeTransform);
                 
-                Transform3D sferaTrans = new Transform3D();
+                Transform3D sferaTrans = new Transform3D();                     // ustawienie prymitywu w pozycji początkowej
                 sferaTrans.set(new Vector3f(Rsx, Rsy, Rsz));
                 tmp_rot = new Transform3D();
                 Transform3D tmp_rot2 = new Transform3D();
@@ -697,7 +680,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
   }
     
     public static void main(String[] args)
-    {
+    {                                                                           // main method
         Arm3D2 mainScene = new Arm3D2();
         mainScene.addKeyListener(mainScene);
     }
