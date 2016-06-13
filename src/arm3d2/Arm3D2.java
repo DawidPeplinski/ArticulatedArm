@@ -12,6 +12,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,8 +40,10 @@ import javax.media.j3d.Texture2D;
 import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JPanel;
 import javax.vecmath.Color3f;
 import javax.vecmath.Color4f;
 import javax.vecmath.Point3d;
@@ -69,11 +72,12 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private boolean isGripped, upCol, downCol, isRec, isPlay, RisGripped;
     private ArrayList<String> recList;
     private int recSize, recInd;
-    
+    private JButton recB, playB;
     
     public Arm3D2()
     {
         super("Articulated Arm");
+        setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
         GraphicsConfiguration myConfig =
@@ -81,13 +85,28 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         Canvas3D myCanvas = new Canvas3D(myConfig);
         myCanvas.setPreferredSize(new Dimension(1200,1000));
         
+        add(BorderLayout.CENTER, myCanvas);
         myCanvas.addKeyListener(this);
+        
+        JPanel nagrywanie = new JPanel(new GridLayout());
+        add("North", nagrywanie);
+        recB = new JButton("Start recording");
+        playB = new JButton("Play");
+        
+        nagrywanie.add(recB);
+        recB.addActionListener(this);
+        nagrywanie.add(playB);
+        playB.addActionListener(this);
+        
+        recB.setFocusable(false);
+        playB.setFocusable(false);
+        
         
         add(myCanvas);
         pack();
         setVisible(true);
          
-        numOfKeys = 14;
+        numOfKeys = 10;
         klawisze        = new boolean[numOfKeys];
         for(int i=0; i<numOfKeys; i++) klawisze[i] = false;
         isGripped = false;
@@ -328,8 +347,43 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void actionPerformed(ActionEvent e) 
+    {
+        if(e.getSource()==recB)
+        {
+            if(!isRec && !isPlay)
+                { Rx2 = x2; Ry2 = y2; Rx1 = x1; Ry1 = y1; Rx = x; Ry = y; Rx3 = x3; Ry3 = y3; Rrot1 = rot1; Rrot2 = rot2; Rrot = rot; Rrot3 = rot3; Rrot4 = rot4; Rrot5 = rot5; Rsx = sx; Rsy = sy; Rsz = sz;
+                    RisGripped = isGripped;
+                    recList = new ArrayList<String>();
+                    System.out.println("Recording...");
+                    isRec = true;
+                    recB.setText("Stop recording");
+                }
+            else if(isRec)
+                {
+                recSize = recList.size();
+                System.out.println("Recording stopped.");
+                isRec = false;
+                recB.setText("Start recording");
+                }   
+        }
+        else if(e.getSource()==playB)
+        {
+            if(!isPlay && !isRec && recSize>0) 
+            {
+                recInit();
+                System.out.println("Playing...");
+                isPlay = true;
+                playB.setText("Stop");
+            }
+            else if(isPlay)
+            {
+                System.out.println("Playing Stopped");
+                isPlay = false;
+                recInd = 0;
+                playB.setText("Play");
+            }
+        }
     }
 
     @Override
@@ -352,10 +406,6 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_X:   klawisze[7] = true; break;
                     case KeyEvent.VK_C:   klawisze[8] = true; break;
                     case KeyEvent.VK_V:   klawisze[9] = true; break;
-                    case KeyEvent.VK_R:   klawisze[10] = true; break;
-                    case KeyEvent.VK_T:   klawisze[11] = true; break;
-                    case KeyEvent.VK_Y:   klawisze[12] = true; break;
-                    case KeyEvent.VK_U:   klawisze[13] = true; break;
         }
     }
 
@@ -373,10 +423,6 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                     case KeyEvent.VK_X:   klawisze[7] = false; break;
                     case KeyEvent.VK_C:   klawisze[8] = false; break;
                     case KeyEvent.VK_V:   klawisze[9] = false; break;
-                    case KeyEvent.VK_R:   klawisze[10] = false; break;
-                    case KeyEvent.VK_T:   klawisze[11] = false; break;
-                    case KeyEvent.VK_Y:   klawisze[12] = false; break;
-                    case KeyEvent.VK_U:   klawisze[13] = false; break;
          }
     }
  
@@ -585,42 +631,6 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 sferaTrans.mul(tmp_rot);
                 sferaTrans.mul(tmp_rot2);
                 sferaTG.setTransform(sferaTrans); 
-            }
-            
-            
-            if(klawisze[10])
-            {
-                if(!isRec)
-                { Rx2 = x2; Ry2 = y2; Rx1 = x1; Ry1 = y1; Rx = x; Ry = y; Rx3 = x3; Ry3 = y3; Rrot1 = rot1; Rrot2 = rot2; Rrot = rot; Rrot3 = rot3; Rrot4 = rot4; Rrot5 = rot5; Rsx = sx; Rsy = sy; Rsz = sz;
-                    RisGripped = isGripped;
-                    recList = new ArrayList<String>();
-                    System.out.println("Recording...");
-                }
-                isRec = true;
-            }
-            if(klawisze[11])
-            {
-                if(isRec)
-                {
-                recSize = recList.size();
-                System.out.println("Recording stopped.");
-                }
-                 isRec = false;
-            }
-            if(klawisze[12])
-            {
-                if(!isPlay && !isRec && recSize>0) recInit();
-                System.out.println("Playing...");
-                isPlay = true;
-            }
-            if(klawisze[13])
-            {
-                if(isPlay)
-                {
-                    System.out.println("Playing Stopped");
-                    isPlay = false;
-                    recInd = 0;
-                }
             }
            if(isPlay) recInd++;
            if(recInd == recSize && isPlay)
