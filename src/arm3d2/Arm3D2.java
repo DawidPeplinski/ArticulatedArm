@@ -417,129 +417,91 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
 
             if(klawisze[0] || (isPlay && "q".equals(recList.get(recInd))))
             {
-                if(rot < Math.PI)
-                {
-            //        if(!upCol || isPlay)
-                    {
+
               Transform3D  tmp_rot      = new Transform3D();
-              tmp_rot.rotZ(myAngle);
-              myTransform.mul(tmp_rot);
+              myTransform = new Transform3D();
               rot = (float) (rot + myAngle);
+              tmp_rot.rotZ(rot);
+              myTransform.mul(tmp_rot);
               x = (float) (0.875f*(Math.cos(rot)));
               y = (float) (0.875f*(Math.sin(rot)));
               myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
               myTransformGroup.setTransform(myTransform);
               if(isGripped) rot5 = rot5 + myAngle;
               if(isRec) recList.add("q");
-                    }
-              if(myColGripper.inCollision && !downCol) upCol = true;
-              if(!myColGripper.inCollision && upCol) upCol = false;
-                }
             }
             if(klawisze[1] || (isPlay && "a".equals(recList.get(recInd))))
             {
-                if(rot > 0)
-                {
-                //    if(!downCol || isPlay)
-                    {
                 Transform3D  tmp_rot      = new Transform3D();
-                tmp_rot.rotZ(-myAngle);
-                myTransform.mul(tmp_rot);
+                myTransform = new Transform3D();
                 rot = (float) (rot - myAngle);
+                tmp_rot.rotZ(rot);
+                myTransform.mul(tmp_rot);
                 x = (float) (0.875f*(Math.cos(rot)));
                 y = (float) (0.875f*(Math.sin(rot)));
                 myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
                 myTransformGroup.setTransform(myTransform);
                 if(isGripped) rot5 = rot5 - myAngle;
                 if(isRec) recList.add("a");
-                    }
-                if(myColGripper.inCollision && !upCol) downCol = true;
-                if(!myColGripper.inCollision && downCol) downCol = false;
-                }
             }
             if(klawisze[2] || (isPlay && "w".equals(recList.get(recInd))))
             {
-                if(rot1 < 3*Math.PI/4)
-                {
-             //        if(!upCol || isPlay)
-                    {
+
                 Transform3D  tmp_rot      = new Transform3D();
-                tmp_rot.rotZ(myAngle);
-                myTransform1.mul(tmp_rot);
+                myTransform1 = new Transform3D();
                 rot1 = (float) (rot1 + myAngle);
+                tmp_rot.rotZ(rot1);
+                myTransform1.mul(tmp_rot);
                 x1 = (float) (0.875f*(Math.cos(rot1)));
                 y1 = (float) (0.875f*(Math.sin(rot1)));
                 myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
                 if(isGripped) rot5 = rot5 + myAngle;
                 if(isRec) recList.add("w");
-                }
-              if(myColGripper.inCollision && !downCol) upCol = true;
-              if(!myColGripper.inCollision && upCol) upCol = false;
-                }
+
             }
             if(klawisze[3] || (isPlay && "s".equals(recList.get(recInd)))) 
             {
-                if(rot1 > -3*Math.PI/4)
-                {
-           //         if(!downCol || isPlay)
-                    {
+
                 Transform3D  tmp_rot      = new Transform3D();
-                tmp_rot.rotZ(-myAngle);
-                myTransform1.mul(tmp_rot);
+                myTransform1 = new Transform3D();
                 rot1 = (float) (rot1 - myAngle);
+                tmp_rot.rotZ(rot1);
+                myTransform1.mul(tmp_rot);
                 x1 = (float) (0.875f*(Math.cos(rot1)));
                 y1 = (float) (0.875f*(Math.sin(rot1)));
                 myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
                 myTransformGroup1.setTransform(myTransform1);
                 if(isGripped) rot5 = rot5 - myAngle;
                 if(isRec) recList.add("s");
-                }
-                if(myColGripper.inCollision && !upCol) downCol = true;
-                if(!myColGripper.inCollision && downCol) downCol = false;
-                }
             }
             if(klawisze[4] || (isPlay && "e".equals(recList.get(recInd))))
             {
-                if(rot2 < 3*Math.PI/4)
-                {
-          //          if(!upCol || isPlay)
-                    {
                 Transform3D  tmp_rot      = new Transform3D();
-                tmp_rot.rotZ(myAngle);
-                myTransform2.mul(tmp_rot);
+                myTransform2 = new Transform3D();
                 rot2 = (float) (rot2 + myAngle);
+                tmp_rot.rotZ(rot2);
+                myTransform2.mul(tmp_rot);
                 x2 = (float) (0.875f*(Math.cos(rot2)));
                 y2 = (float) (0.875f*(Math.sin(rot2)));
                 myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
                 if(isGripped) rot5 = rot5 + myAngle;
                 if(isRec) recList.add("e");
-                }
-              if(myColGripper.inCollision && !downCol) upCol = true;
-              if(!myColGripper.inCollision && upCol) upCol = false;
-                }
             }
             if(klawisze[5] || (isPlay && "d".equals(recList.get(recInd))))
             {
-                if(rot2 > -3*Math.PI/4)
-                {
-        //        if(!downCol || isPlay)
-                    {
                 Transform3D  tmp_rot      = new Transform3D();
-                tmp_rot.rotZ(-myAngle);
-                myTransform2.mul(tmp_rot);
+                myTransform2 = new Transform3D();
                 rot2 = (float) (rot2 - myAngle);
+                tmp_rot.rotZ(rot2);
+                myTransform2.mul(tmp_rot);
                 x2 = (float) (0.875f*(Math.cos(rot2)));
                 y2 = (float) (0.875f*(Math.sin(rot2)));
                 myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
                 if(isGripped) rot5 = rot5 - myAngle;
                 if(isRec) recList.add("d");
-                }
-                if(myColGripper.inCollision && !upCol) downCol = true;
-                if(!myColGripper.inCollision && downCol) downCol = false;
-                }
             }
             if(klawisze[6] || (isPlay && "z".equals(recList.get(recInd))))
             {
