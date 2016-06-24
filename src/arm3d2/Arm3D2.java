@@ -419,7 +419,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             {
                 if(rot < Math.PI)
                 {
-                    if(!upCol || isPlay)
+            //        if(!upCol || isPlay)
                     {
               Transform3D  tmp_rot      = new Transform3D();
               tmp_rot.rotZ(myAngle);
@@ -440,7 +440,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             {
                 if(rot > 0)
                 {
-                    if(!downCol || isPlay)
+                //    if(!downCol || isPlay)
                     {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(-myAngle);
@@ -461,7 +461,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             {
                 if(rot1 < 3*Math.PI/4)
                 {
-                     if(!upCol || isPlay)
+             //        if(!upCol || isPlay)
                     {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(myAngle);
@@ -482,7 +482,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             {
                 if(rot1 > -3*Math.PI/4)
                 {
-                    if(!downCol || isPlay)
+           //         if(!downCol || isPlay)
                     {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(-myAngle);
@@ -503,7 +503,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             {
                 if(rot2 < 3*Math.PI/4)
                 {
-                    if(!upCol || isPlay)
+          //          if(!upCol || isPlay)
                     {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(myAngle);
@@ -524,7 +524,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
             {
                 if(rot2 > -3*Math.PI/4)
                 {
-                if(!downCol || isPlay)
+        //        if(!downCol || isPlay)
                     {
                 Transform3D  tmp_rot      = new Transform3D();
                 tmp_rot.rotZ(-myAngle);
