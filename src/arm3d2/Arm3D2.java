@@ -53,7 +53,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
     private BranchGroup mySceneBranch;
     private CollisionDetector myColGripper;
     private Sphere mySphere;
-    private float x2, y2, x1, y1, x, y, x3, y3, rot1, rot2, rot, rot3, rot4, rot5;
+    private float x2, y2, x1, y1, x, y, x3, y3, XX, YY, rot1, rot2, rot, rot3, rot4, rot5, length;                      // współrzędne poszczególnych elementów oraz końca chwytaka
     private float Rx2, Ry2, Rx1, Ry1, Rx, Ry, Rx3, Ry3, Rrot1, Rrot2, Rrot, Rrot3, Rrot4, Rrot5, Rsx, Rsy, Rsz;
     private float myAngle = (float) (Math.PI/72);
     private boolean     klawisze[];
@@ -97,6 +97,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         setVisible(true);
                                                                                 // wartości początkowe pól
         numOfKeys = 10;
+        YY = 0.4f;
+        XX = 0.4f;
+        length = 0.39f;
         klawisze        = new boolean[numOfKeys];
         for(int i=0; i<numOfKeys; i++) klawisze[i] = false;
         isGripped = false;
@@ -328,7 +331,9 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
         baseTransform.setTranslation(new Vector3f(0.0f, -0.4f, 0.0f));
         baseTransformGroup.setTransform(baseTransform);
         wholeTransformGroup.addChild(baseTransformGroup);
-         
+        
+        doTheTransforms();
+        
         return mySceneBranch;
     }
 
@@ -409,75 +414,78 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
          }
     }
  
-    class Zadanie extends TimerTask{
-
-        @Override
-        public void run()                                                       // animacja, obsługa wciśniętych przycisków, obliczanie pozycji poszczególnych elementów
-        {
-
-            if(klawisze[0] || (isPlay && "q".equals(recList.get(recInd))))
-            {
-
-              Transform3D  tmp_rot      = new Transform3D();
+    public void doTheTransforms()
+    {
+               
+ 
+               float D = ((XX*XX) + (YY*YY) - 2*length*length)/(2*length*length);
+               float sqr =  (float) ((float) (-1.0f)*Math.sqrt(1 - D*D));
+               if(sqr>0) sqr = sqr * -1.0f;
+               rot1 = (float) Math.atan(sqr/(D));
+               rot = (float) (Math.atan(YY/XX) - Math.atan((Math.sin(rot1))/(1 + Math.cos(rot1))));
+              System.out.println("" + rot + "  " + rot1 + " D: " + D + " pierw: " + sqr);
+              Transform3D tmp_rot      = new Transform3D();
               myTransform = new Transform3D();
-              rot = (float) (rot + myAngle);
               tmp_rot.rotZ(rot);
               myTransform.mul(tmp_rot);
               x = (float) (0.875f*(Math.cos(rot)));
               y = (float) (0.875f*(Math.sin(rot)));
               myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
               myTransformGroup.setTransform(myTransform);
-              if(isGripped) rot5 = rot5 + myAngle;
+             
+              tmp_rot      = new Transform3D();
+               myTransform1 = new Transform3D();
+               tmp_rot.rotZ(rot1);
+               myTransform1.mul(tmp_rot);
+               x1 = (float) (0.875f*(Math.cos(rot1)));
+               y1 = (float) (0.875f*(Math.sin(rot1)));
+               myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
+               myTransformGroup1.setTransform(myTransform1);
+               if(isGripped) rot5 = rot5 + myAngle;              
+    }
+    
+    
+    class Zadanie extends TimerTask{
+
+        @Override
+        public void run()                                                       // animacja, obsługa wciśniętych przycisków, obliczanie pozycji poszczególnych elementów
+        {
+            float prom = XX*XX + YY*YY;
+            if(klawisze[0] || (isPlay && "q".equals(recList.get(recInd))))
+            {
+                if(prom < 0.56f)
+                {
+              XX = XX + 0.01f;
+              doTheTransforms();
               if(isRec) recList.add("q");
+                }
             }
             if(klawisze[1] || (isPlay && "a".equals(recList.get(recInd))))
             {
-                Transform3D  tmp_rot      = new Transform3D();
-                myTransform = new Transform3D();
-                rot = (float) (rot - myAngle);
-                tmp_rot.rotZ(rot);
-                myTransform.mul(tmp_rot);
-                x = (float) (0.875f*(Math.cos(rot)));
-                y = (float) (0.875f*(Math.sin(rot)));
-                myTransform.setTranslation(new Vector3f(x, y + 1.0f, 0.0f));
-                myTransformGroup.setTransform(myTransform);
-                if(isGripped) rot5 = rot5 - myAngle;
+                if(prom > 0.4f)
+                {
+                XX = XX - 0.01f;
+                doTheTransforms();
                 if(isRec) recList.add("a");
+                }
             }
             if(klawisze[2] || (isPlay && "w".equals(recList.get(recInd))))
             {
-
-                Transform3D  tmp_rot      = new Transform3D();
-                myTransform1 = new Transform3D();
-                rot1 = (float) (rot1 + myAngle);
-                tmp_rot.rotZ(rot1);
-                myTransform1.mul(tmp_rot);
-                x1 = (float) (0.875f*(Math.cos(rot1)));
-                y1 = (float) (0.875f*(Math.sin(rot1)));
-                myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
-                myTransformGroup1.setTransform(myTransform1);
-                if(isGripped) rot5 = rot5 + myAngle;
+                YY = YY + 0.01f;
+                doTheTransforms();
                 if(isRec) recList.add("w");
 
             }
             if(klawisze[3] || (isPlay && "s".equals(recList.get(recInd)))) 
             {
 
-                Transform3D  tmp_rot      = new Transform3D();
-                myTransform1 = new Transform3D();
-                rot1 = (float) (rot1 - myAngle);
-                tmp_rot.rotZ(rot1);
-                myTransform1.mul(tmp_rot);
-                x1 = (float) (0.875f*(Math.cos(rot1)));
-                y1 = (float) (0.875f*(Math.sin(rot1)));
-                myTransform1.setTranslation(new Vector3f(x1 + 0.875f, y1, 0.0f));
-                myTransformGroup1.setTransform(myTransform1);
-                if(isGripped) rot5 = rot5 - myAngle;
+                YY = YY - 0.01f;
+                doTheTransforms();
                 if(isRec) recList.add("s");
             }
             if(klawisze[4] || (isPlay && "e".equals(recList.get(recInd))))
             {
-                Transform3D  tmp_rot      = new Transform3D();
+          /*      Transform3D  tmp_rot      = new Transform3D();
                 myTransform2 = new Transform3D();
                 rot2 = (float) (rot2 + myAngle);
                 tmp_rot.rotZ(rot2);
@@ -487,11 +495,11 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
                 if(isGripped) rot5 = rot5 + myAngle;
-                if(isRec) recList.add("e");
+                if(isRec) recList.add("e");*/
             }
             if(klawisze[5] || (isPlay && "d".equals(recList.get(recInd))))
             {
-                Transform3D  tmp_rot      = new Transform3D();
+             /*   Transform3D  tmp_rot      = new Transform3D();
                 myTransform2 = new Transform3D();
                 rot2 = (float) (rot2 - myAngle);
                 tmp_rot.rotZ(rot2);
@@ -501,7 +509,7 @@ public class Arm3D2 extends JFrame implements ActionListener, KeyListener
                 myTransform2.setTranslation(new Vector3f(x2 + 0.875f , y2 + 0.1f, 0.0f));
                 myTransformGroup2.setTransform(myTransform2);
                 if(isGripped) rot5 = rot5 - myAngle;
-                if(isRec) recList.add("d");
+                if(isRec) recList.add("d");*/
             }
             if(klawisze[6] || (isPlay && "z".equals(recList.get(recInd))))
             {
